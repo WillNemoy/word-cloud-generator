@@ -1,8 +1,3 @@
 
-python-dotenv
-pynytimes
-pandas
-openpyxl
-
-
-
+keybert
+rake-nltk
