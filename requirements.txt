@@ -1,3 +1,6 @@
 
 keybert
 rake-nltk
+textblob
+pandas
+spacy
