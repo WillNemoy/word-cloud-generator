@@ -54,5 +54,9 @@ def word_cloud_generator(text, remove_text):
 
     return df
 
+test_string =  """ 
+Enter text here. The word cloud generator will extract noun phrases with two or more words. This parameter was chosen as it strikes a good balance between insightfulness and restrictiveness.
+"""
+
 output = word_cloud_generator(test_string, remove_text)
 print(output)

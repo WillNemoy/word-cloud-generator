@@ -18,6 +18,10 @@ import re
 import pandas as pd
 import numpy as np
 
+import nltk
+from nltk.corpus import stopwords
+stop_words = stopwords.words('english')
+
 #https://stackoverflow.com/questions/33289820/noun-phrases-with-spacy
 def word_cloud_generator(text, remove_text):
         
@@ -32,6 +36,9 @@ def word_cloud_generator(text, remove_text):
 
     #remove punctutation
     text = remove_punctuation(text)
+
+    #lower case
+    text = text.lower()
     
     #create SpaCy object
     text_spacy = nlp(text)
@@ -39,7 +46,35 @@ def word_cloud_generator(text, remove_text):
     #select noun phrases
     noun_phrases = []
     for np in text_spacy.noun_chunks:
-        noun_phrases.append(np.text)
+        noun_phrase = np.text
+
+        #remove spot words
+        noun_phrase_split = noun_phrase.split(" ")
+        noun_phrase_split_clean = []
+
+        for word in noun_phrase_split:
+            if not word in stop_words:
+                noun_phrase_split_clean.append(word)
+        
+        noun_phrase_clean = ' '.join(noun_phrase_split_clean)
+
+        #only return noun phrases with at least 2 words
+        if (" " in noun_phrase_clean) and not (noun_phrase_clean in remove_phrases):
+            noun_phrases.append(noun_phrase_clean)
+
+        """
+        noun_phrase_split = noun_phrase.split(" ")
+        #only return noun phrases with at least 2 words
+        if (" " in noun_phrase) and not (noun_phrase in remove_phrases):
+            
+            #remove leading and trailing spotwords
+            noun_phrase_split = noun_phrase.split(" ")
+            if noun_phrase_split[0] in stop_words:
+                noun_phrase = ' '.join(noun_phrase_split[1:])
+
+                
+            """
+            
 
     #count noun phrases
     noun_phrases_count = []
@@ -57,18 +92,6 @@ def word_cloud_generator(text, remove_text):
 
         noun_phrases_count.append(count)
 
-    """
-    #only return noun phrases with at least 2 words
-    for phrase in txtBlob:
-            if (" " in phrase) and not (phrase in remove_phrases):
-                noun_phrases.append(phrase)
-                
-    #get the count of noun phrases
-    for noun_phrase in noun_phrases:
-        noun_phrase_count = str(txtBlob).count(noun_phrase)
-        noun_phrases_count.append(noun_phrase_count)
-    """
-  
     word_cloud_data = {'x': noun_phrases, "value": noun_phrases_count}
 
     # Create the DataFrame
@@ -84,6 +107,8 @@ def word_cloud_generator(text, remove_text):
     
 
 test_string = "Enter text here. The word cloud generator will extract noun phrases with two or more words. This parameter was chosen as it strikes a good balance between insightfulness and restrictiveness."
+
+
 remove_text = " dsffs {random son} {i dont} dwadse {34}"
 
 output = word_cloud_generator(test_string, remove_text)
