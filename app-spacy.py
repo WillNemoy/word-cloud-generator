@@ -1,6 +1,4 @@
-test_string = "Enter text here. The word cloud generator will extract noun phrases with two or more words. This parameter was chosen as it strikes a good balance between insightfulness and restrictiveness."
 
-remove_text = " dsffs {random son} {i dont} dwadse {34}"
 
 ##from spacy.lang.en import English
 #import spacy
@@ -36,15 +34,29 @@ def word_cloud_generator(text, remove_text):
     text = remove_punctuation(text)
     
     #create SpaCy object
-    text = nlp(text)
+    text_spacy = nlp(text)
 
     #select noun phrases
-    for np in text.noun_chunks:
-        print(np.text)
-        
-    
     noun_phrases = []
+    for np in text_spacy.noun_chunks:
+        noun_phrases.append(np.text)
+
+    #count noun phrases
     noun_phrases_count = []
+    for np in noun_phrases:
+
+        #must ensure the function is only counting words
+        #ie: "it" should not count "with"
+        #theory: all noun phrases will either start or end with a " "
+        np_1 = " " + np
+        count = text.count(np_1)
+
+        if count == 0:
+            np_2 = np + " "
+            count = text.count(np_2)
+
+        noun_phrases_count.append(count)
+
     """
     #only return noun phrases with at least 2 words
     for phrase in txtBlob:
@@ -55,6 +67,7 @@ def word_cloud_generator(text, remove_text):
     for noun_phrase in noun_phrases:
         noun_phrase_count = str(txtBlob).count(noun_phrase)
         noun_phrases_count.append(noun_phrase_count)
+    """
   
     word_cloud_data = {'x': noun_phrases, "value": noun_phrases_count}
 
@@ -68,7 +81,10 @@ def word_cloud_generator(text, remove_text):
         df = df.iloc[0:20]
                 
     return df
-    """
+    
+
+test_string = "Enter text here. The word cloud generator will extract noun phrases with two or more words. This parameter was chosen as it strikes a good balance between insightfulness and restrictiveness."
+remove_text = " dsffs {random son} {i dont} dwadse {34}"
 
 output = word_cloud_generator(test_string, remove_text)
 print(output)
